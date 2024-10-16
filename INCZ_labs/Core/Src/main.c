@@ -28,7 +28,12 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+typedef enum
+{
+	RED,
+	YELLOW,
+	GREEN
+}color_e;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -50,6 +55,9 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+void LedColorOn(color_e color);
+void LedColorOff(color_e color);
+void GetPortAndPinFromColor(color_e color, GPIO_TypeDef** port, uint16_t* pin);
 
 /* USER CODE END PFP */
 
@@ -95,6 +103,17 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  LedColorOn(RED);
+	  HAL_Delay(1000);
+	  LedColorOn(YELLOW);
+	  HAL_Delay(500);
+	  LedColorOff(RED);
+	  LedColorOff(YELLOW);
+	  LedColorOn(GREEN);
+	  HAL_Delay(1000);
+	  LedColorOff(GREEN);
+	  LedColorOn(YELLOW);
+	  HAL_Delay(500);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -152,7 +171,43 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void LedColorOn(color_e color)
+{
+	GPIO_TypeDef * port;
+	uint16_t pin;
 
+	GetPortAndPinFromColor(color, &port, &pin);
+
+	HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
+}
+
+
+void LedColorOff(color_e color)
+{
+	GPIO_TypeDef * port;
+	uint16_t pin;
+
+	GetPortAndPinFromColor(color, &port, &pin);
+
+	HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
+}
+
+
+void GetPortAndPinFromColor(color_e color, GPIO_TypeDef** port, uint16_t* pin)
+{
+	switch(color)
+	{
+	case RED:
+		*port = RED_LED_GPIO_Port;
+		*pin = RED_LED_Pin;
+	case YELLOW:
+		*port = YELLOW_LED_GPIO_Port;
+		*pin = YELLOW_LED_Pin;
+	case GREEN:
+		*port = GREEN_LED_GPIO_Port;
+		*pin = GREEN_LED_Pin;
+	}
+}
 /* USER CODE END 4 */
 
 /**
